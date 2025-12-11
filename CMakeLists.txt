@@ -19,12 +19,7 @@ pkg_check_modules(LUA REQUIRED IMPORTED_TARGET lua)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # Create executable
-add_executable(${PROJECT_NAME} ${SOURCES}
-        Makefile
-        src/Game.h
-        src/Game.cpp
-        src/Logger.cpp
-        src/Logger.h)
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -42,3 +37,42 @@ target_link_libraries(${PROJECT_NAME}
 
 # Add compile definitions
 target_compile_definitions(${PROJECT_NAME} PRIVATE SOL_ALL_SAFETIES_ON=1)
+
+# Enable testing
+enable_testing()
+
+# Find Google Test
+find_package(GTest REQUIRED)
+include(GoogleTest)
+
+# Collect test source files (excluding main.cpp from src)
+file(GLOB TEST_SOURCES "tests/*.cpp")
+
+# Collect all ECS and Component source files for the test executable
+file(GLOB ECS_SOURCES "src/ECS/*.cpp")
+file(GLOB COMPONENT_SOURCES "src/Components/*.cpp")
+
+# Create test executable
+add_executable(run_tests
+    ${TEST_SOURCES}
+    ${ECS_SOURCES}
+    ${COMPONENT_SOURCES}
+)
+
+# Include directories for tests
+target_include_directories(run_tests PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/libs
+    ${GTEST_INCLUDE_DIRS}
+)
+
+# Link Google Test and other necessary libraries
+target_link_libraries(run_tests
+    GTest::gtest
+    GTest::gtest_main
+    PkgConfig::SDL2
+    PkgConfig::LUA
+)
+
+# Discover tests
+gtest_discover_tests(run_tests)
