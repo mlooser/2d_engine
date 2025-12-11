@@ -22,7 +22,9 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 add_executable(${PROJECT_NAME} ${SOURCES}
         Makefile
         src/Game.h
-        src/Game.cpp)
+        src/Game.cpp
+        src/Logger.cpp
+        src/Logger.h)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE

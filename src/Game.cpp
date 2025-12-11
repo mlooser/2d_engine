@@ -1,10 +1,11 @@
 #include "Game.h"
 
 #include <iostream>
+#include <SDL2/SDL_image.h>
 
 Game::Game() {
     if (SDL_Init(SDL_INIT_EVERYTHING)!=0) {
-        std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        logger.Error("SDL_Init Error: " + std::string(SDL_GetError()));
     }
 
     SDL_DisplayMode displayMode;
@@ -19,17 +20,19 @@ Game::Game() {
         SDL_WINDOW_SHOWN);
 
     if (!window) {
-        std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        logger.Error("SDL_CreateWindow Error: " + std::string(SDL_GetError()));
     }
 
     renderer = SDL_CreateRenderer(window, -1,0);
     if (!renderer) {
-        std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+        logger.Error("SDL_CreateRenderer Error: " + std::string(SDL_GetError()));
     }
 
     SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
     isRunning = true;
+
+    lastUpdateTime = SDL_GetTicks();
 }
 
 Game::~Game() {
@@ -37,12 +40,13 @@ Game::~Game() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    std::cout<<"Game destroyed"<<std::endl;
+    logger.Info("Game::~Game");
 }
 
 void Game::Run() {
     while (isRunning) {
         ProcessEvents();
+        Update();
         Render();
     }
 }
@@ -65,9 +69,29 @@ void Game::ProcessEvents() {
 }
 
 void Game::Render() {
-    SDL_SetRenderDrawColor(renderer, 100, 0, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
+
+    SDL_Surface* tank = IMG_Load("./assets/images/tank-tiger-right.png");
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, tank);
+    SDL_FreeSurface(tank);
+
+    SDL_Rect rect = {10, 10, 32, 32};
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_DestroyTexture(texture);
+
     SDL_RenderPresent(renderer);
+}
+
+void Game::Update() {
+    Uint32 delta = SDL_GetTicks() - lastUpdateTime;
+    Uint32 timeToWait = FRAME_MILLISECONDS - delta;
+    if (timeToWait>0 && timeToWait < FRAME_MILLISECONDS) {
+        SDL_Delay(timeToWait);
+    }
+
+
+    lastUpdateTime = SDL_GetTicks();
 }
 
 
