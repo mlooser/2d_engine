@@ -36,3 +36,22 @@ TEST(AddEntityToSystemsTest, OnlyAddsEntitiesWithRequiredComponent) {
     ASSERT_EQ(entities.size(), 1);
     EXPECT_EQ(entities[0].GetId(), entity1.GetId());
 }
+
+TEST(AddEntityToSystemsTest, DontAddEntitiyWithRemovedRequiredComponent) {
+    Registry registry;
+
+    registry.AddSystem<TestSystem>();
+    TestSystem& system = registry.GetSystem<TestSystem>();
+    system.RequireComponent<TestComponent>();
+
+    Entity entity = registry.CreateEntity();
+
+
+    registry.AddComponent<TestComponent>(entity, 42);
+    registry.RemoveComponent<TestComponent>(entity);
+
+    registry.AddEntityToSystems(entity);
+
+    const auto& entities = system.GetEntities();
+    ASSERT_EQ(entities.size(), 0);
+}
