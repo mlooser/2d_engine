@@ -53,6 +53,7 @@ public:
     template <typename TSystem>
     bool RemoveSystem();
 
+    void AddEntityToSystems(Entity entity);
 
     void Update();
 };
@@ -67,10 +68,10 @@ void Registry::AddComponent(Entity entity, TArgs &&...args) {
     }
 
     if (!componentLists[componentId]) {
-        componentLists[componentId] = new ComponentsList<T>();
+        componentLists[componentId] = new ComponentsList<T>(numOfEntities);
     }
 
-    ComponentsList<T>* componentList = componentLists[componentId];
+    auto* componentList = static_cast<ComponentsList<T>*>(componentLists[componentId]);
     if (entityId>=componentList->Size()) {
         componentList->Resize(numOfEntities);
     }

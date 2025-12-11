@@ -11,6 +11,19 @@ Entity Registry::CreateEntity() {
     return entity;
 }
 
+void Registry::AddEntityToSystems(Entity entity) {
+    const auto entityId = entity.GetId();
+    auto& entitySignature = entitySignatures[entityId];
+
+    for (auto& system : systems) {
+        const auto& sysSignature = system.second->GetSignature();
+
+        if ((entitySignature & sysSignature) == sysSignature) {
+            system.second->AddEntity(entity);
+        }
+    }
+}
+
 void Registry::DestroyEntity(Entity entity) {
 }
 

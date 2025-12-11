@@ -15,6 +15,11 @@ class System {
 
 public:
     template <typename T> void RequireComponent();
+
+    void AddEntity(Entity entity);
+    Signature& GetSignature() { return requiredSignature; }
+    const std::vector<Entity>& GetEntities() const { return entities; }
+    size_t GetEntityCount() const { return entities.size(); }
 };
 
 template<typename T>

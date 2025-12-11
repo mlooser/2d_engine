@@ -5,7 +5,7 @@ class Entity {
 public:
     explicit Entity(const int id) : id(id){};
 
-    int GetId();
+    int GetId() const;
 
     bool operator<(const Entity& other) const {
         return id < other.id;

@@ -9,7 +9,7 @@ public:
 };
 
 template <typename T>
-class ComponentsList: public BaseComponent {
+class ComponentsList: public BaseComponentList {
 private:
     std::vector<T> components;
 
