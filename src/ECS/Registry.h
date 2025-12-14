@@ -5,23 +5,28 @@
 #include <unordered_map>
 #include <vector>
 #include <utility>
+#include <memory>
 #include "Entity.h"
 #include "System.h"
 #include "Component.h"
 #include "ComponentsList.h"
+#include "../Logger.h"
 
 class Registry {
 private:
     int numOfEntities = 0;
-    std::vector<BaseComponentList* > componentLists;
+    std::vector<std::unique_ptr<BaseComponentList>> componentLists;
     std::vector<Signature> entitySignatures;
-    std::unordered_map<std::type_index, System*> systems;
+    std::unordered_map<std::type_index, std::unique_ptr<System>> systems;
 
     std::set<Entity> entitiesToBeAdded;
     std::set<Entity> entitiesRemoved;
 
+    Logger* logger;
+
 public:
-    Registry() = default;
+    explicit Registry(Logger* logger)
+    : logger(logger){}
 
     Entity CreateEntity();
 
@@ -31,8 +36,8 @@ public:
     template <typename TComponent>
     void RemoveComponent(Entity entity);
 
-    template <typename T>
-    void GetCmponent(Entity entity);
+    template <typename TComponent>
+    TComponent& GetCmponent(Entity entity);
 
     template <typename T>
     bool HasCmponent(Entity entity);
@@ -56,6 +61,8 @@ public:
     void AddEntityToSystems(Entity entity);
 
     void Update();
+
+    Logger& GetLogger(){return *logger;}
 };
 
 template<typename T, typename ... TArgs>
@@ -64,14 +71,14 @@ void Registry::AddComponent(Entity entity, TArgs &&...args) {
     const auto entityId = entity.GetId();
 
     if (componentId>=componentLists.size()) {
-        componentLists.resize(componentLists.size()+1, nullptr);
+        componentLists.resize(componentLists.size()+1);
     }
 
     if (!componentLists[componentId]) {
-        componentLists[componentId] = new ComponentsList<T>(numOfEntities);
+        componentLists[componentId] = std::make_unique<ComponentsList<T>>(numOfEntities);
     }
 
-    auto* componentList = static_cast<ComponentsList<T>*>(componentLists[componentId]);
+    auto* componentList = static_cast<ComponentsList<T>*>(componentLists[componentId].get());
     if (entityId>=componentList->Size()) {
         componentList->Resize(numOfEntities);
     }
@@ -85,24 +92,34 @@ void Registry::AddComponent(Entity entity, TArgs &&...args) {
 
 template<typename TComponent>
 void Registry::RemoveComponent(Entity entity) {
-    const auto conponentId = Component<TComponent>::GetID();
+    const auto componentId = Component<TComponent>::GetID();
     const auto entityId = entity.GetId();
 
-    entitySignatures[entityId].reset(conponentId);
+    entitySignatures[entityId].reset(componentId);
+}
+
+template<typename TComponent>
+TComponent& Registry::GetCmponent(Entity entity) {
+    const auto componentId = Component<TComponent>::GetID();
+    const auto entityId = entity.GetId();
+
+    auto* componentList = static_cast<ComponentsList<TComponent>*>(componentLists[componentId].get());
+
+    return componentList->Get(entityId);
 }
 
 template<typename T>
 bool Registry::HasCmponent(Entity entity) {
-    const auto conponentId = Component<T>::GetID();
+    const auto componentId = Component<T>::GetID();
     const auto entityId = entity.GetId();
 
-    return entitySignatures[entityId].test(conponentId);
+    return entitySignatures[entityId].test(componentId);
 }
 
 template<typename TSystem, typename ... TArgs>
 void Registry::AddSystem(TArgs &&...args) {
-    auto* system = new TSystem(std::forward<TArgs>(args)...);
-    systems.insert(std::make_pair(std::type_index(typeid(TSystem)), system));
+    auto system = std::make_unique<TSystem>(this, std::forward<TArgs>(args)...);
+    systems.insert(std::make_pair(std::type_index(typeid(TSystem)), std::move(system)));
 }
 
 template<typename TSystem>
@@ -112,6 +129,6 @@ bool Registry::HasSystem() {
 
 template<typename TSystem>
 TSystem& Registry::GetSystem() {
-    auto system = systems[std::type_index(typeid(TSystem))];
-    return *(static_cast<TSystem*>(system));
+    auto& system = systems[std::type_index(typeid(TSystem))];
+    return *(static_cast<TSystem*>(system.get()));
 }

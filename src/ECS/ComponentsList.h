@@ -8,10 +8,10 @@ public:
     virtual ~BaseComponentList() = default;
 };
 
-template <typename T>
+template <typename TComponent>
 class ComponentsList: public BaseComponentList {
 private:
-    std::vector<T> components;
+    std::vector<TComponent> components;
 
 public:
     ComponentsList(int initSize) {
@@ -22,7 +22,10 @@ public:
 
     void Resize(int newSize);
 
-    void Set(int index, T component);
+    void Set(int index, TComponent component);
+
+
+    TComponent& Get(int index);
 };
 
 template<typename T>
@@ -38,4 +41,9 @@ void ComponentsList<T>::Resize(int newSize) {
 template<typename T>
 void ComponentsList<T>::Set(int index, T component) {
     components[index] = component;
+}
+
+template<typename TComponent>
+TComponent & ComponentsList<TComponent>::Get(int index) {
+    return components[index];
 }

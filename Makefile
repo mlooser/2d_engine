@@ -13,7 +13,8 @@ BUILD_DIR = build
 # Source files
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp) \
           $(wildcard $(SRC_DIR)/ECS/*.cpp) \
-          $(wildcard $(SRC_DIR)/Components/*.cpp)
+          $(wildcard $(SRC_DIR)/Components/*.cpp) \
+          $(wildcard $(SRC_DIR)/Systems/*.cpp)
 
 # Output executable
 TARGET = gameengine

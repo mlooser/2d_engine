@@ -19,7 +19,9 @@ pkg_check_modules(LUA REQUIRED IMPORTED_TARGET lua)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # Create executable
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES}
+        src/Systems/MovementSystem.cpp
+        src/Systems/MovementSystem.h)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -57,6 +59,7 @@ add_executable(run_tests
     ${TEST_SOURCES}
     ${ECS_SOURCES}
     ${COMPONENT_SOURCES}
+        src/Components/RigidBody.h
 )
 
 # Include directories for tests

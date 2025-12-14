@@ -3,7 +3,13 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 
+#include "Components/RigidBody.h"
+#include "Components/Transform.h"
+#include "Systems/MovementSystem.h"
+
 Game::Game() {
+    registry = std::make_unique<Registry>(&logger);
+
     if (SDL_Init(SDL_INIT_EVERYTHING)!=0) {
         logger.Error("SDL_Init Error: " + std::string(SDL_GetError()));
     }
@@ -33,6 +39,8 @@ Game::Game() {
     isRunning = true;
 
     lastUpdateTime = SDL_GetTicks();
+
+    SpawnEntities();
 }
 
 Game::~Game() {
@@ -77,7 +85,7 @@ void Game::Render() {
     SDL_FreeSurface(tank);
 
     SDL_Rect rect = {10, 10, 32, 32};
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_RenderCopy(renderer, texture, nullptr, &rect);
     SDL_DestroyTexture(texture);
 
     SDL_RenderPresent(renderer);
@@ -90,8 +98,23 @@ void Game::Update() {
         SDL_Delay(timeToWait);
     }
 
-
     lastUpdateTime = SDL_GetTicks();
+
+    registry->GetSystem<MovementSystem>().Update(delta/1000.f);
+
+    registry->Update();
+}
+
+void Game::SpawnEntities() {
+
+    registry->AddSystem<MovementSystem>();
+
+    Entity tank = registry->CreateEntity();
+
+    registry->AddComponent<Transform>(tank, glm::vec2(10,10));
+    registry->AddComponent<RigidBody>(tank, glm::vec2(10, 10));
+
+    registry->AddEntityToSystems(tank);
 }
 
 

@@ -13,7 +13,15 @@ class System {
     Signature requiredSignature;
     std::vector<Entity> entities;
 
+protected:
+    class Registry* owner;
+
 public:
+    explicit System(Registry* owner):owner(owner){}
+
+    virtual ~System()= default;
+    virtual void Update(float deltaTime) {}
+
     template <typename T> void RequireComponent();
 
     void AddEntity(Entity entity);

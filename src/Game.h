@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include "Logger.h"
+#include "ECS/Registry.h"
 
 class Game {
 
@@ -13,11 +14,15 @@ class Game {
     bool isRunning = false;
 
     Uint32 lastUpdateTime = 0;
+    std::unique_ptr<Registry> registry;
+
     Logger logger;
 
     void ProcessEvents();
     void Render();
     void Update();
+
+    void SpawnEntities();
 public:
     Game();
 
