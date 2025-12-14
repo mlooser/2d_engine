@@ -70,7 +70,7 @@ void Registry::AddComponent(Entity entity, TArgs &&...args) {
     const auto componentId = Component<T>::GetID();
     const auto entityId = entity.GetId();
 
-    if (componentId>=componentLists.size()) {
+    if (static_cast<size_t>(componentId) >= componentLists.size()) {
         componentLists.resize(componentLists.size()+1);
     }
 

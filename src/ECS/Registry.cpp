@@ -2,7 +2,7 @@
 
 Entity Registry::CreateEntity() {
     int newId = numOfEntities++;
-    if (newId >= entitySignatures.size()) {
+    if (static_cast<size_t>(newId) >= entitySignatures.size()) {
         entitySignatures.resize(newId + 1);
     }
 
@@ -25,6 +25,7 @@ void Registry::AddEntityToSystems(Entity entity) {
 }
 
 void Registry::DestroyEntity(Entity entity) {
+    (void)entity;
 }
 
 void Registry::Update() {

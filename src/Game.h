@@ -8,7 +8,7 @@
 class Game {
 
     const int FPS = 60;
-    const int FRAME_MILLISECONDS = 1000/FPS;
+    const Uint32 FRAME_MILLISECONDS = 1000/FPS;
 
     SDL_Window *window;
     SDL_Renderer* renderer;

@@ -20,7 +20,7 @@ public:
     explicit System(Registry* owner):owner(owner){}
 
     virtual ~System()= default;
-    virtual void Update(float deltaTime) {}
+    virtual void Update(float deltaTime) { (void)deltaTime; }
 
     template <typename T> void RequireComponent();
 
