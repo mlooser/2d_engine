@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include "Logger.h"
 #include "ECS/Registry.h"
+#include "AssetStore/AssetStore.h"
 
 class Game {
 
@@ -15,8 +16,10 @@ class Game {
 
     Uint32 lastUpdateTime = 0;
     std::unique_ptr<Registry> registry;
+    std::unique_ptr<AssetStore> asserStore;
 
     Logger logger;
+
 
     void ProcessEvents();
     void Render();

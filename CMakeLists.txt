@@ -25,7 +25,9 @@ add_executable(${PROJECT_NAME} ${SOURCES}
         src/Components/Sprite.cpp
         src/Components/Sprite.h
         src/Systems/RenderingSystem.cpp
-        src/Systems/RenderingSystem.h)
+        src/Systems/RenderingSystem.h
+        src/AssetStore/AssetStore.cpp
+        src/AssetStore/AssetStore.h)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -68,6 +70,8 @@ add_executable(run_tests
         src/Components/Sprite.h
         src/Systems/RenderingSystem.cpp
         src/Systems/RenderingSystem.h
+        src/AssetStore/AssetStore.cpp
+        src/AssetStore/AssetStore.h
 )
 
 # Include directories for tests

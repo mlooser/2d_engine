@@ -37,7 +37,7 @@ public:
     void RemoveComponent(Entity entity);
 
     template <typename TComponent>
-    TComponent& GetCmponent(Entity entity);
+    TComponent& GetComponent(Entity entity);
 
     template <typename T>
     bool HasCmponent(Entity entity);
@@ -99,7 +99,7 @@ void Registry::RemoveComponent(Entity entity) {
 }
 
 template<typename TComponent>
-TComponent& Registry::GetCmponent(Entity entity) {
+TComponent& Registry::GetComponent(Entity entity) {
     const auto componentId = Component<TComponent>::GetID();
     const auto entityId = entity.GetId();
 

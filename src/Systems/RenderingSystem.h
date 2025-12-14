@@ -6,12 +6,18 @@
 #include "../Components/Transform.h"
 #include "../ECS/System.h"
 
+class AssetStore;
+
 class RenderingSystem: public System {
+
+    AssetStore* assets;
 
 public:
     explicit RenderingSystem(
-        Registry* owner)
-    : System(owner){
+        Registry* owner,
+        AssetStore* assetStore)
+    : System(owner),
+    assets(assetStore){
         RequireComponent<Transform>();
         RequireComponent<Sprite>();
     }

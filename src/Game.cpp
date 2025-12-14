@@ -11,6 +11,7 @@
 Game::Game() {
     registry = std::make_unique<Registry>(&logger);
 
+
     if (SDL_Init(SDL_INIT_EVERYTHING)!=0) {
         logger.Error("SDL_Init Error: " + std::string(SDL_GetError()));
     }
@@ -40,6 +41,8 @@ Game::Game() {
     isRunning = true;
 
     lastUpdateTime = SDL_GetTicks();
+
+    asserStore = std::make_unique<AssetStore>(renderer);
 
     SpawnEntities();
 }
@@ -81,14 +84,6 @@ void Game::Render() {
     SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
 
-    SDL_Surface* tank = IMG_Load("./assets/images/tank-tiger-right.png");
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, tank);
-    SDL_FreeSurface(tank);
-
-    SDL_Rect rect = {10, 10, 32, 32};
-    SDL_RenderCopy(renderer, texture, nullptr, &rect);
-    SDL_DestroyTexture(texture);
-
     registry->GetSystem<RenderingSystem>().Render(renderer);
 
     SDL_RenderPresent(renderer);
@@ -111,13 +106,13 @@ void Game::Update() {
 void Game::SpawnEntities() {
 
     registry->AddSystem<MovementSystem>();
-    registry->AddSystem<RenderingSystem>();
+    registry->AddSystem<RenderingSystem>(asserStore.get());
 
     Entity tank = registry->CreateEntity();
 
-    registry->AddComponent<Transform>(tank, glm::vec2(10,10));
+    registry->AddComponent<Transform>(tank, glm::vec2(10,10), glm::vec2(3,3));
     registry->AddComponent<RigidBody>(tank, glm::vec2(300, 300));
-    registry->AddComponent<Sprite>(tank, 10, 10);
+    registry->AddComponent<Sprite>(tank, "tank", 32, 32);
 
     registry->AddEntityToSystems(tank);
 }
