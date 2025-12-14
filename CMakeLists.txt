@@ -21,7 +21,11 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCES}
         src/Systems/MovementSystem.cpp
-        src/Systems/MovementSystem.h)
+        src/Systems/MovementSystem.h
+        src/Components/Sprite.cpp
+        src/Components/Sprite.h
+        src/Systems/RenderingSystem.cpp
+        src/Systems/RenderingSystem.h)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -60,6 +64,10 @@ add_executable(run_tests
     ${ECS_SOURCES}
     ${COMPONENT_SOURCES}
         src/Components/RigidBody.h
+        src/Components/Sprite.cpp
+        src/Components/Sprite.h
+        src/Systems/RenderingSystem.cpp
+        src/Systems/RenderingSystem.h
 )
 
 # Include directories for tests

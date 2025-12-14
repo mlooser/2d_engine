@@ -6,6 +6,7 @@
 #include "Components/RigidBody.h"
 #include "Components/Transform.h"
 #include "Systems/MovementSystem.h"
+#include "Systems/RenderingSystem.h"
 
 Game::Game() {
     registry = std::make_unique<Registry>(&logger);
@@ -88,6 +89,8 @@ void Game::Render() {
     SDL_RenderCopy(renderer, texture, nullptr, &rect);
     SDL_DestroyTexture(texture);
 
+    registry->GetSystem<RenderingSystem>().Render(renderer);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -108,11 +111,13 @@ void Game::Update() {
 void Game::SpawnEntities() {
 
     registry->AddSystem<MovementSystem>();
+    registry->AddSystem<RenderingSystem>();
 
     Entity tank = registry->CreateEntity();
 
     registry->AddComponent<Transform>(tank, glm::vec2(10,10));
-    registry->AddComponent<RigidBody>(tank, glm::vec2(10, 10));
+    registry->AddComponent<RigidBody>(tank, glm::vec2(300, 300));
+    registry->AddComponent<Sprite>(tank, 10, 10);
 
     registry->AddEntityToSystems(tank);
 }

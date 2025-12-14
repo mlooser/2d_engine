@@ -14,10 +14,5 @@ void MovementSystem::Update(float deltaTime) {
         auto& rigidBody = owner->GetCmponent<RigidBody>(entity);
 
         transform.position += rigidBody.velocity * deltaTime;
-
-        owner->GetLogger().Info(
-            "New position is ("
-            + std::to_string(transform.position.x)
-            + ", " + std::to_string(transform.position.y) + ")");
     }
 }
