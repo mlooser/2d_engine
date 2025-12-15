@@ -1,6 +1,9 @@
 #include "Game.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 #include <SDL2/SDL_image.h>
 
 #include "Components/RigidBody.h"
@@ -115,6 +118,50 @@ void Game::SpawnEntities() {
     registry->AddComponent<Sprite>(tank, "tank", 32, 32);
 
     registry->AddEntityToSystems(tank);
+    LoadTileMap();
+}
+
+void Game::LoadTileMap() {
+    std::ifstream mapFile("./assets/tilemaps/jungle.map");
+    if (!mapFile.is_open()) {
+        logger.Error("Failed to open jungle.map");
+        return;
+    }
+
+    const int tileSize = 32;
+    const int tilemapColumns = 10;
+
+    double scale = 2.0;
+    glm::vec2 tileScale = glm::vec2(scale, scale);
+
+    std::string line;
+    int row = 0;
+
+    while (std::getline(mapFile, line)) {
+        std::stringstream ss(line);
+        std::string token;
+        int col = 0;
+
+        while (std::getline(ss, token, ',')) {
+            int tileId = std::stoi(token);
+
+            int srcX = (tileId % tilemapColumns) * tileSize;
+            int srcY = (tileId / tilemapColumns) * tileSize;
+
+            int dstX = col * tileSize * scale;
+            int dstY = row * tileSize * scale;
+
+            Entity tile = registry->CreateEntity();
+            registry->AddComponent<Transform>(tile, glm::vec2(dstX, dstY), tileScale);
+            registry->AddComponent<Sprite>(tile, "tilemap-image", tileSize, tileSize, srcX, srcY);
+            registry->AddEntityToSystems(tile);
+
+            col++;
+        }
+        row++;
+    }
+
+    mapFile.close();
 }
 
 

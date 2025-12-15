@@ -26,6 +26,7 @@ class Game {
     void Update();
 
     void SpawnEntities();
+    void LoadTileMap();
 public:
     Game();
 
