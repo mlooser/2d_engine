@@ -115,7 +115,7 @@ void Game::SpawnEntities() {
 
     registry->AddComponent<Transform>(tank, glm::vec2(10,10), glm::vec2(3,3));
     registry->AddComponent<RigidBody>(tank, glm::vec2(300, 300));
-    registry->AddComponent<Sprite>(tank, "tank", 32, 32);
+    registry->AddComponent<Sprite>(tank, "tank", 32, 32, 0, 0, 2);
 
     registry->AddEntityToSystems(tank);
     LoadTileMap();
@@ -153,7 +153,7 @@ void Game::LoadTileMap() {
 
             Entity tile = registry->CreateEntity();
             registry->AddComponent<Transform>(tile, glm::vec2(dstX, dstY), tileScale);
-            registry->AddComponent<Sprite>(tile, "tilemap-image", tileSize, tileSize, srcX, srcY);
+            registry->AddComponent<Sprite>(tile, "tilemap-image", tileSize, tileSize, srcX, srcY, 0);
             registry->AddEntityToSystems(tile);
 
             col++;

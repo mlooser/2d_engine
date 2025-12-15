@@ -3,10 +3,20 @@
 #include "../ECS/Registry.h"
 #include "../AssetStore/AssetStore.h"
 #include <SDL2/SDL.h>
+#include <algorithm>
+#include <vector>
 
 void RenderingSystem::Render(SDL_Renderer* renderer) {
 
-    for (auto& entity : GetEntities()) {
+    std::vector<Entity> sortedEntities(GetEntities().begin(), GetEntities().end());
+
+    std::sort(sortedEntities.begin(), sortedEntities.end(), [this](const Entity& a, const Entity& b) {
+        const auto& spriteA = owner->GetComponent<Sprite>(a);
+        const auto& spriteB = owner->GetComponent<Sprite>(b);
+        return spriteA.zIndex < spriteB.zIndex;
+    });
+
+    for (auto& entity : sortedEntities) {
         auto& transform = owner->GetComponent<Transform>(entity);
         auto& sprite = owner->GetComponent<Sprite>(entity);
 
