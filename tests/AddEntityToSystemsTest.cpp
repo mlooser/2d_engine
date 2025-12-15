@@ -2,6 +2,7 @@
 #include "../src/ECS/Registry.h"
 #include "../src/ECS/System.h"
 #include "../src/ECS/Component.h"
+#include "../src/Logger.h"
 
 // Test Component
 struct TestComponent {
@@ -10,10 +11,14 @@ struct TestComponent {
 };
 
 // Test System
-class TestSystem : public System {};
+class TestSystem : public System {
+public:
+    explicit TestSystem(Registry* owner) : System(owner) {}
+};
 
 TEST(AddEntityToSystemsTest, OnlyAddsEntitiesWithRequiredComponent) {
-    Registry registry;
+    Logger logger;
+    Registry registry(&logger);
 
     // Create a system that requires TestComponent
     registry.AddSystem<TestSystem>();
@@ -38,7 +43,8 @@ TEST(AddEntityToSystemsTest, OnlyAddsEntitiesWithRequiredComponent) {
 }
 
 TEST(AddEntityToSystemsTest, DontAddEntitiyWithRemovedRequiredComponent) {
-    Registry registry;
+    Logger logger;
+    Registry registry(&logger);
 
     registry.AddSystem<TestSystem>();
     TestSystem& system = registry.GetSystem<TestSystem>();

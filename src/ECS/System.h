@@ -2,6 +2,7 @@
 
 #include <bitset>
 #include <vector>
+#include <stdexcept>
 #include "Entity.h"
 #include "Component.h"
 
@@ -33,5 +34,8 @@ public:
 template<typename T>
 void System::RequireComponent() {
     auto componentId = Component<T>::GetID();
+    if (static_cast<unsigned int>(componentId) >= MAX_COMPONENTS) {
+        throw std::runtime_error("Component ID exceeds MAX_COMPONENTS");
+    }
     requiredSignature.set(componentId);
 }

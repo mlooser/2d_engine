@@ -21,19 +21,25 @@ SOURCES = $(wildcard $(SRC_DIR)/*.cpp) \
 TARGET = gameengine
 
 # Default target
-all: $(TARGET)
+all: test $(TARGET)
 
 # Build target
 $(TARGET): $(SOURCES)
 	$(CXX) $(CXXFLAGS) $(SOURCES) $(LDFLAGS) -o $(TARGET)
 
-# Run the game
-run: $(TARGET)
+# Run tests
+test:
+	@echo "Running tests..."
+	@./run_tests.sh || (echo "Tests failed! Fix tests before running the game." && exit 1)
+
+# Run the game (tests must pass first)
+run: test $(TARGET)
 	./$(TARGET)
 
 # Clean build artifacts
 clean:
 	rm -f $(TARGET)
+	rm -rf build/
 
 # Phony targets
-.PHONY: all run clean
+.PHONY: all run clean test

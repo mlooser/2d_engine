@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <stdexcept>
 #include "Entity.h"
 #include "System.h"
 #include "Component.h"
@@ -71,7 +72,7 @@ void Registry::AddComponent(Entity entity, TArgs &&...args) {
     const auto entityId = entity.GetId();
 
     if (static_cast<size_t>(componentId) >= componentLists.size()) {
-        componentLists.resize(componentLists.size()+1);
+        componentLists.resize(componentId + 1);
     }
 
     if (!componentLists[componentId]) {
@@ -103,6 +104,10 @@ TComponent& Registry::GetComponent(Entity entity) {
     const auto componentId = Component<TComponent>::GetID();
     const auto entityId = entity.GetId();
 
+    if (static_cast<size_t>(componentId) >= componentLists.size() || !componentLists[componentId]) {
+        throw std::runtime_error("Component not found");
+    }
+
     auto* componentList = static_cast<ComponentsList<TComponent>*>(componentLists[componentId].get());
 
     return componentList->Get(entityId);
@@ -112,6 +117,10 @@ template<typename T>
 bool Registry::HasCmponent(Entity entity) {
     const auto componentId = Component<T>::GetID();
     const auto entityId = entity.GetId();
+
+    if (static_cast<size_t>(entityId) >= entitySignatures.size()) {
+        return false;
+    }
 
     return entitySignatures[entityId].test(componentId);
 }

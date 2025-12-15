@@ -5,6 +5,7 @@
 AssetStore::AssetStore(SDL_Renderer* renderer) : renderer(renderer) {
     AddTexture("tank", "./assets/images/tank-panther-left.png");
     AddTexture("tilemap-image", "./assets/tilemaps/jungle.png");
+    AddTexture("chopper", "./assets/images/chopper.png");
 }
 
 AssetStore::~AssetStore() {

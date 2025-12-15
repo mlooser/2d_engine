@@ -1,24 +1,28 @@
 #include <gtest/gtest.h>
 #include "../src/ECS/Registry.h"
 #include "../src/ECS/Entity.h"
+#include "../src/Logger.h"
 
 // Test System class
 struct TestSystem : public System {
     int value;
-    TestSystem(int val = 0) : value(val) {}
+    explicit TestSystem(Registry* owner, int val = 0) : System(owner), value(val) {}
 };
 
 // Test fixture for Registry tests
 class RegistryTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        registry = new Registry();
+        logger = new Logger();
+        registry = new Registry(logger);
     }
 
     void TearDown() override {
         delete registry;
+        delete logger;
     }
 
+    Logger* logger;
     Registry* registry;
 };
 

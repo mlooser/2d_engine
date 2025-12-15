@@ -8,8 +8,12 @@
 
 #include "Components/RigidBody.h"
 #include "Components/Transform.h"
+#include "Components/SpriteAnimation.h"
+#include "Systems/AnimationSystem.h"
 #include "Systems/MovementSystem.h"
 #include "Systems/RenderingSystem.h"
+
+struct SpriteAnimation;
 
 Game::Game() {
     registry = std::make_unique<Registry>(&logger);
@@ -93,15 +97,19 @@ void Game::Render() {
 }
 
 void Game::Update() {
-    Uint32 delta = SDL_GetTicks() - lastUpdateTime;
-    Uint32 timeToWait = FRAME_MILLISECONDS - delta;
+    Uint32 deltaTicks = SDL_GetTicks() - lastUpdateTime;
+    Uint32 timeToWait = FRAME_MILLISECONDS - deltaTicks;
     if (timeToWait>0 && timeToWait < FRAME_MILLISECONDS) {
         SDL_Delay(timeToWait);
     }
 
-    lastUpdateTime = SDL_GetTicks();
+    Uint32 nowTicks = SDL_GetTicks();
+    deltaTicks = nowTicks - lastUpdateTime;
+    lastUpdateTime = nowTicks;
 
-    registry->GetSystem<MovementSystem>().Update(delta/1000.f);
+    float deltaTime = static_cast<float>(deltaTicks) / 1000.f;
+    registry->GetSystem<AnimationSystem>().Update(deltaTime);
+    registry->GetSystem<MovementSystem>().Update(deltaTime);
 
     registry->Update();
 }
@@ -110,14 +118,17 @@ void Game::SpawnEntities() {
 
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderingSystem>(asserStore.get());
+    registry->AddSystem<AnimationSystem>();
 
-    Entity tank = registry->CreateEntity();
+    Entity chopper = registry->CreateEntity();
 
-    registry->AddComponent<Transform>(tank, glm::vec2(10,10), glm::vec2(3,3));
-    registry->AddComponent<RigidBody>(tank, glm::vec2(300, 300));
-    registry->AddComponent<Sprite>(tank, "tank", 32, 32, 0, 0, 2);
+    registry->AddComponent<Transform>(chopper, glm::vec2(10,10), glm::vec2(3,3));
+    registry->AddComponent<RigidBody>(chopper, glm::vec2(30, 30));
+    registry->AddComponent<Sprite>(chopper, "chopper", 32, 32, 0, 0, 2);
+    registry->AddComponent<SpriteAnimation>(chopper, 2, 10, true);
 
-    registry->AddEntityToSystems(tank);
+    registry->AddEntityToSystems(chopper);
+
     LoadTileMap();
 }
 

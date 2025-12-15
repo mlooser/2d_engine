@@ -27,7 +27,10 @@ add_executable(${PROJECT_NAME} ${SOURCES}
         src/Systems/RenderingSystem.cpp
         src/Systems/RenderingSystem.h
         src/AssetStore/AssetStore.cpp
-        src/AssetStore/AssetStore.h)
+        src/AssetStore/AssetStore.h
+        src/Components/SpriteAnimation.h
+        src/Systems/AnimationSystem.cpp
+        src/Systems/AnimationSystem.h)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -65,6 +68,7 @@ add_executable(run_tests
     ${TEST_SOURCES}
     ${ECS_SOURCES}
     ${COMPONENT_SOURCES}
+        src/Logger.cpp
         src/Components/RigidBody.h
         src/Components/Sprite.cpp
         src/Components/Sprite.h
@@ -72,6 +76,9 @@ add_executable(run_tests
         src/Systems/RenderingSystem.h
         src/AssetStore/AssetStore.cpp
         src/AssetStore/AssetStore.h
+        src/Components/SpriteAnimation.h
+        src/Systems/AnimationSystem.cpp
+        src/Systems/AnimationSystem.h
 )
 
 # Include directories for tests
@@ -86,6 +93,7 @@ target_link_libraries(run_tests
     GTest::gtest
     GTest::gtest_main
     PkgConfig::SDL2
+    PkgConfig::SDL2_IMAGE
     PkgConfig::LUA
 )
 
