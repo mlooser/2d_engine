@@ -79,6 +79,9 @@ add_executable(run_tests
         src/Components/SpriteAnimation.h
         src/Systems/AnimationSystem.cpp
         src/Systems/AnimationSystem.h
+        src/Components/RectCollider.h
+        src/Systems/AABBCollistionSystem.cpp
+        src/Systems/AABBCollistionSystem.h
 )
 
 # Include directories for tests
